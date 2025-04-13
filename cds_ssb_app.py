@@ -12,15 +12,17 @@ class CDS_SSB_alloc:
     def calculate_total(self):
         return self.gk + self.eng + self.mth
 
-    def allocate_ssb(self):
-        total = self.calculate_total()
-
-        written_cutoffs = {
+    def get_cutoffs(self):
+        return {
             'AFA': 156,
             'IMA': 137,
             'INA': 122,
             'OTA': 88
         }
+
+    def allocate_ssb(self):
+        total = self.calculate_total()
+        written_cutoffs = self.get_cutoffs()
 
         if self.gender == 'female':
             if self.preference != ['OTA']:
@@ -66,4 +68,15 @@ if st.button("Check SSB Allocation"):
     else:
         candidate = CDS_SSB_alloc(gk, eng, mth, gender, preference)
         result = candidate.allocate_ssb()
+        total_score = candidate.calculate_total()
+        cutoffs = candidate.get_cutoffs()
+
         st.success(result)
+        st.info(f"🧮 Your Total Score: **{total_score}** (GK + English + Math = {gk} + {eng} + {mth})")
+        st.markdown("### 📊 Cutoffs Considered")
+        st.write({
+            "AFA (Air Force)": cutoffs['AFA'],
+            "IMA (Army)": cutoffs['IMA'],
+            "INA (Navy)": cutoffs['INA'],
+            "OTA (Officers Training Academy)": cutoffs['OTA']
+        })
