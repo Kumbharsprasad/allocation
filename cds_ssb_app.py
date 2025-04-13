@@ -53,6 +53,19 @@ class CDS_SSB_alloc:
 # Streamlit UI
 st.title("CDS SSB Allocation Predictor")
 
+# Sidebar Cutoff Info
+st.sidebar.title("📊 SSB Cutoffs")
+st.sidebar.markdown("These are the written exam cutoffs considered for allocation:")
+
+cutoffs = CDS_SSB_alloc(0, 0, 0, 'male', []).get_cutoffs()
+st.sidebar.write({
+    "AFA (Air Force)": cutoffs['AFA'],
+    "IMA (Army)": cutoffs['IMA'],
+    "INA (Navy)": cutoffs['INA'],
+    "OTA (Officers Training Academy)": cutoffs['OTA']
+})
+
+# Inputs
 gk = st.number_input("Enter GK Marks", min_value=0, max_value=100)
 eng = st.number_input("Enter English Marks", min_value=0, max_value=100)
 mth = st.number_input("Enter Math Marks", min_value=0, max_value=100)
@@ -62,6 +75,7 @@ preference = st.multiselect(
     ["AFA", "IMA", "INA", "OTA"]
 )
 
+# Output
 if st.button("Check SSB Allocation"):
     if len(preference) == 0:
         st.warning("Please select at least one preference.")
@@ -69,14 +83,6 @@ if st.button("Check SSB Allocation"):
         candidate = CDS_SSB_alloc(gk, eng, mth, gender, preference)
         result = candidate.allocate_ssb()
         total_score = candidate.calculate_total()
-        cutoffs = candidate.get_cutoffs()
 
         st.success(result)
         st.info(f"🧮 Your Total Score: **{total_score}** (GK + English + Math = {gk} + {eng} + {mth})")
-        st.markdown("### 📊 Cutoffs Considered")
-        st.write({
-            "AFA (Air Force)": cutoffs['AFA'],
-            "IMA (Army)": cutoffs['IMA'],
-            "INA (Navy)": cutoffs['INA'],
-            "OTA (Officers Training Academy)": cutoffs['OTA']
-        })
